@@ -1,16 +1,18 @@
 import os
+import sys
 import tempfile
+sys.path.append('../../')
+from gemini_utils import call_gemini_chat
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders.sitemap import SitemapLoader
 from langchain_community.vectorstores import SKLearnVectorStore
-from langchain_openai import OpenAIEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langsmith import traceable
-from openai import OpenAI
 from typing import List
 import nest_asyncio
 
-MODEL_NAME = "gpt-4o-mini"
-MODEL_PROVIDER = "openai"
+MODEL_NAME = "gemini-1.5-flash"
+MODEL_PROVIDER = "google"
 APP_VERSION = 1.0
 RAG_SYSTEM_PROMPT = """You are an assistant for question-answering tasks. 
 Use the following pieces of retrieved context to answer the latest question in the conversation. 
@@ -18,11 +20,10 @@ If you don't know the answer, just say that you don't know.
 Use three sentences maximum and keep the answer concise.
 """
 
-openai_client = OpenAI()
 
 def get_vector_db_retriever():
     persist_path = os.path.join(tempfile.gettempdir(), "union.parquet")
-    embd = OpenAIEmbeddings()
+    embd = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 
     # If vector store exists, then load it
     if os.path.exists(persist_path):
@@ -79,11 +80,11 @@ def generate_response(question: str, documents):
             "content": f"Context: {formatted_docs} \n\n Question: {question}"
         }
     ]
-    return call_openai(messages)
+    return call_gemini(messages)
 
 """
-call_openai
-- Returns the chat completion output from OpenAI
+call_gemini
+- Returns the chat completion output from Google Gemini
 """
 @traceable(
     run_type="llm",
@@ -92,11 +93,8 @@ call_openai
         "ls_model_name": MODEL_NAME
     }
 )
-def call_openai(messages: List[dict]) -> str:
-    return openai_client.chat.completions.create(
-        model=MODEL_NAME,
-        messages=messages,
-    )
+def call_gemini(messages: List[dict]) -> str:
+    return call_gemini_chat(MODEL_NAME, messages)
 
 """
 langsmith_rag
@@ -108,4 +106,4 @@ langsmith_rag
 def langsmith_rag(question: str):
     documents = retrieve_documents(question)
     response = generate_response(question, documents)
-    return response.choices[0].message.content
+    return response

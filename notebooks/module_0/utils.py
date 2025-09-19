@@ -3,11 +3,11 @@ import tempfile
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders.sitemap import SitemapLoader
 from langchain_community.vectorstores import SKLearnVectorStore
-from langchain_openai import OpenAIEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 def get_vector_db_retriever():
     persist_path = os.path.join(tempfile.gettempdir(), "union.parquet")
-    embd = OpenAIEmbeddings()
+    embd = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 
     # If vector store exists, then load it
     if os.path.exists(persist_path):
