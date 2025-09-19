@@ -1,34 +1,41 @@
-# Intro to LangSmith
+# Introdução ao LangSmith
 
-Welcome to Intro to LangSmith!
+Bem-vindo à Introdução ao LangSmith!
 
-## Introduction
-In this course we will walk through the fundamentals of LangSmith - exploring observability, prompt engineering, evaluations, feedback mechanisms, and production monitoring. Take a look at the setup instructions below so you can follow along with any of our notebook examples.
+## Introdução
+
+Neste curso, vamos percorrer os fundamentos do LangSmith - explorando observabilidade, engenharia de prompts, avaliações, mecanismos de feedback e monitoramento de produção. Dê uma olhada nas instruções de configuração abaixo para acompanhar qualquer um dos nossos exemplos de notebook.
 
 ---
 
-## Setup
-Follow these instructions to make sure you have all the resources necessary for this course!
+## Configuração
 
-### Sign up for LangSmith
-* Sign up [here](https://smith.langchain.com/) 
-* Navigate to the Settings page, and generate an API key in LangSmith.
-* Create a .env file that mimics the provided .env.example. Set `LANGCHAIN_API_KEY` in the .env file.
+Siga estas instruções para ter certeza de que você tem todos os recursos necessários para este curso!
 
-### Set OpenAI API key
-* If you don't have an OpenAI API key, you can sign up [here](https://openai.com/index/openai-api/).
-* Set `OPENAI_API_KEY` in the .env file.
+### Inscrever-se no LangSmith
 
-### Create an environment and install dependencies
+* [Inscreva-se](https://smith.langchain.com/)
+* Navegue até a página de Configurações e gere uma chave de API no LangSmith.
+* Crie um arquivo .env que imita o .env.example fornecido. Defina `LANGCHAIN_API_KEY` no arquivo .env.
+
+### Configurar chave da API do Google
+
+* Se você não tem uma chave da API do Google, pode [se inscrever aqui](https://aistudio.google.com/app/apikey).
+* Defina `GOOGLE_API_KEY` no arquivo .env.
+
+### Criar ambiente e instalar dependências
+
+```bash
+cd intro-to-langsmith
+python3 -m venv intro-to-ls
+source intro-to-ls/bin/activate
+pip install -r requirements.txt
 ```
-$ cd intro-to-langsmith
-$ python3 -m venv intro-to-ls
-$ source intro-to-ls/bin/activate
-$ pip install -r requirements.txt
-```
 
-### Self-Hosted LangSmith
-Note: If you are using a self-hosted version of LangSmith, you'll need to set this environment variable in addition to the others - see this [guide](https://docs.smith.langchain.com/self_hosting/usage) for more info
-```
-LANGSMITH_ENDPOINT = "<your-self-hosted-url>/api/v1"
+### LangSmith Auto-hospedado
+
+Nota: Se você está usando uma versão auto-hospedada do LangSmith, precisará definir esta variável de ambiente além das outras - veja este [guia](https://docs.smith.langchain.com/self_hosting/usage) para mais informações
+
+```txt
+LANGSMITH_ENDPOINT = "<sua-url-auto-hospedada>/api/v1"
 ```

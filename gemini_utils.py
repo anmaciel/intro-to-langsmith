@@ -1,24 +1,24 @@
 """
-Utilities for Google Gemini API integration
-Provides helper functions to convert OpenAI format to Gemini format
+Utilitários para integração da API Google Gemini
+Fornece funções auxiliares para converter formato OpenAI para formato Gemini
 """
 import os
 import google.generativeai as genai
 from typing import List, Dict, Any
 
 def configure_gemini():
-    """Configure Gemini API with API key from environment"""
+    """Configura API Gemini com chave API do ambiente"""
     api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key:
-        raise ValueError("GOOGLE_API_KEY environment variable is required")
+        raise ValueError("Variável de ambiente GOOGLE_API_KEY é necessária")
     genai.configure(api_key=api_key)
 
 def convert_openai_messages_to_gemini(messages: List[Dict[str, str]]) -> List[Dict[str, Any]]:
     """
-    Convert OpenAI chat messages format to Gemini format
+    Converte formato de mensagens de chat OpenAI para formato Gemini
 
-    OpenAI format: [{"role": "user", "content": "Hello"}]
-    Gemini format: [{"role": "user", "parts": ["Hello"]}]
+    Formato OpenAI: [{"role": "user", "content": "Olá"}]
+    Formato Gemini: [{"role": "user", "parts": ["Olá"]}]
     """
     gemini_messages = []
 
@@ -26,12 +26,12 @@ def convert_openai_messages_to_gemini(messages: List[Dict[str, str]]) -> List[Di
         role = message.get("role")
         content = message.get("content", "")
 
-        # Map OpenAI roles to Gemini roles
+        # Mapeia roles OpenAI para roles Gemini
         if role == "system":
-            # Gemini doesn't have system role, prepend as user message
+            # Gemini não tem role system, adiciona como mensagem user
             gemini_messages.append({
                 "role": "user",
-                "parts": [f"System instruction: {content}"]
+                "parts": [f"Instrução do sistema: {content}"]
             })
         elif role == "assistant":
             gemini_messages.append({
@@ -47,7 +47,7 @@ def convert_openai_messages_to_gemini(messages: List[Dict[str, str]]) -> List[Di
     return gemini_messages
 
 def create_gemini_client(model_name: str = "gemini-1.5-flash"):
-    """Create and return a Gemini model client"""
+    """Cria e retorna um cliente modelo Gemini"""
     configure_gemini()
     return genai.GenerativeModel(model_name)
 
@@ -57,13 +57,13 @@ def call_gemini_chat(
     temperature: float = 0.0
 ) -> str:
     """
-    Call Gemini API with OpenAI-style messages
-    Returns the response text content
+    Chama API Gemini com mensagens estilo OpenAI
+    Retorna o conteúdo de texto da resposta
     """
-    # Configure Gemini if not already configured
+    # Configura Gemini se ainda não configurado
     configure_gemini()
 
-    # Create model
+    # Cria modelo
     model = genai.GenerativeModel(
         model_name,
         generation_config=genai.types.GenerationConfig(
@@ -71,19 +71,19 @@ def call_gemini_chat(
         )
     )
 
-    # Convert messages
+    # Converte mensagens
     gemini_messages = convert_openai_messages_to_gemini(messages)
 
-    # Handle single vs multiple messages
+    # Trata mensagem única vs múltiplas mensagens
     if len(gemini_messages) == 1:
-        # Single message - use generate_content
+        # Mensagem única - usa generate_content
         response = model.generate_content(gemini_messages[0]["parts"][0])
         return response.text
     else:
-        # Multiple messages - use chat
-        # For system message handling, we'll use the first user message as context
-        if gemini_messages and "System instruction:" in gemini_messages[0]["parts"][0]:
-            # Extract system instruction and combine with user message
+        # Múltiplas mensagens - usa chat
+        # Para tratamento de mensagem system, usaremos a primeira mensagem user como contexto
+        if gemini_messages and "Instrução do sistema:" in gemini_messages[0]["parts"][0]:
+            # Extrai instrução do sistema e combina com mensagem do usuário
             system_msg = gemini_messages[0]["parts"][0]
             if len(gemini_messages) > 1:
                 user_msg = gemini_messages[1]["parts"][0]
@@ -91,16 +91,16 @@ def call_gemini_chat(
                 response = model.generate_content(combined_prompt)
                 return response.text
 
-        # For conversation-style messages, use generate_content with combined text
+        # Para mensagens estilo conversa, usa generate_content com texto combinado
         combined_text = ""
         for msg in gemini_messages:
-            role_label = "Assistant" if msg["role"] == "model" else "User"
+            role_label = "Assistente" if msg["role"] == "model" else "Usuário"
             combined_text += f"{role_label}: {msg['parts'][0]}\n\n"
 
         response = model.generate_content(combined_text)
         return response.text
 
-# Model name mappings
+# Mapeamento de nomes de modelos
 OPENAI_TO_GEMINI_MODELS = {
     "gpt-4o-mini": "gemini-1.5-flash",
     "gpt-4o": "gemini-1.5-pro",
@@ -109,5 +109,5 @@ OPENAI_TO_GEMINI_MODELS = {
 }
 
 def get_gemini_model_name(openai_model: str) -> str:
-    """Convert OpenAI model name to equivalent Gemini model"""
+    """Converte nome do modelo OpenAI para modelo Gemini equivalente"""
     return OPENAI_TO_GEMINI_MODELS.get(openai_model, "gemini-1.5-flash")

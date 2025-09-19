@@ -14,10 +14,10 @@ import nest_asyncio
 MODEL_NAME = "gemini-1.5-flash"
 MODEL_PROVIDER = "google"
 APP_VERSION = 1.0
-RAG_SYSTEM_PROMPT = """You are an assistant for question-answering tasks. 
-Use the following pieces of retrieved context to answer the latest question in the conversation. 
-If you don't know the answer, just say that you don't know. 
-Use three sentences maximum and keep the answer concise.
+RAG_SYSTEM_PROMPT = """Você é um assistente para tarefas de perguntas e respostas.
+Use as seguintes partes do contexto recuperado para responder à pergunta mais recente na conversa.
+Se você não souber a resposta, apenas diga que não sabe.
+Use no máximo três frases e mantenha a resposta concisa.
 """
 
 
@@ -25,7 +25,7 @@ def get_vector_db_retriever():
     persist_path = os.path.join(tempfile.gettempdir(), "union.parquet")
     embd = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 
-    # If vector store exists, then load it
+    # Se o armazenamento vetorial existir, então carregá-lo
     if os.path.exists(persist_path):
         vectorstore = SKLearnVectorStore(
             embedding=embd,
@@ -34,7 +34,7 @@ def get_vector_db_retriever():
         )
         return vectorstore.as_retriever(lambda_mult=0)
 
-    # Otherwise, index LangSmith documents and create new vector store
+    # Caso contrário, indexar documentos LangSmith e criar novo armazenamento vetorial
     ls_docs_sitemap_loader = SitemapLoader(web_path="https://docs.smith.langchain.com/sitemap.xml", continue_on_failure=True)
     ls_docs = ls_docs_sitemap_loader.load()
 
@@ -57,7 +57,7 @@ retriever = get_vector_db_retriever()
 
 """
 retrieve_documents
-- Returns documents fetched from a vectorstore based on the user's question
+- Retorna documentos buscados de um armazenamento vetorial baseado na pergunta do usuário
 """
 @traceable(run_type="chain")
 def retrieve_documents(question: str):
@@ -65,7 +65,7 @@ def retrieve_documents(question: str):
 
 """
 generate_response
-- Calls `call_openai` to generate a model response after formatting inputs
+- Chama `call_gemini` para gerar uma resposta do modelo após formatar entradas
 """
 @traceable(run_type="chain")
 def generate_response(question: str, documents):
@@ -77,7 +77,7 @@ def generate_response(question: str, documents):
         },
         {
             "role": "user",
-            "content": f"Context: {formatted_docs} \n\n Question: {question}"
+            "content": f"Contexto: {formatted_docs} \n\n Pergunta: {question}"
         }
     ]
     return call_gemini(messages)

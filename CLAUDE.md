@@ -1,25 +1,25 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Este arquivo fornece orientação para o Claude Code (claude.ai/code) ao trabalhar com código neste repositório.
 
-## Project Overview
+## Visão Geral do Projeto
 
-This repository contains educational materials for LangSmith Academy - a course teaching LangSmith fundamentals including observability, prompt engineering, evaluations, feedback mechanisms, and production monitoring. The project consists primarily of Jupyter notebooks organized into educational modules with accompanying Python applications.
+Este repositório contém materiais educacionais para a LangSmith Academy - um curso que ensina os fundamentos do LangSmith incluindo observabilidade, engenharia de prompts, avaliações, mecanismos de feedback e monitoramento de produção. O projeto consiste principalmente de notebooks Jupyter organizados em módulos educacionais com aplicações Python acompanhantes.
 
-## Environment Setup
+## Configuração do Ambiente
 
-**Required Environment Variables (use .env file based on .env.example):**
+**Variáveis de Ambiente Necessárias (use arquivo .env baseado no .env.example):**
 
-- `GOOGLE_API_KEY` - Required for Google Gemini models used in examples
-- `LANGCHAIN_API_KEY` - Required for LangSmith tracing and features
-- `LANGCHAIN_TRACING_V2="true"` - Enables LangSmith tracing
-- `LANGCHAIN_PROJECT="langsmith-academy"` - Project name for LangSmith
+- `GOOGLE_API_KEY` - Necessária para modelos Google Gemini usados nos exemplos
+- `LANGCHAIN_API_KEY` - Necessária para rastreamento e recursos do LangSmith
+- `LANGCHAIN_TRACING_V2="true"` - Habilita rastreamento do LangSmith
+- `LANGCHAIN_PROJECT="langsmith-academy"` - Nome do projeto para LangSmith
 
-**For Self-Hosted LangSmith:**
+**Para LangSmith Auto-hospedado:**
 
-- `LANGSMITH_ENDPOINT="<your-self-hosted-url>/api/v1"`
+- `LANGSMITH_ENDPOINT="<sua-url-auto-hospedada>/api/v1"
 
-**Python Environment Setup:**
+**Configuração do Ambiente Python:**
 
 ```bash
 python3 -m venv intro-to-ls
@@ -27,86 +27,86 @@ source intro-to-ls/bin/activate
 pip install -r requirements.txt
 ```
 
-## Architecture and Module Structure
+## Arquitetura e Estrutura de Módulos
 
-The course is organized into 6 modules (0-5), each containing:
+O curso está organizado em 6 módulos (0-5), cada um contendo:
 
-- **Jupyter Notebooks** (.ipynb) - Interactive learning materials
-- **Python Applications** (app.py) - Standalone applications demonstrating concepts
-- **Utility Functions** (utils.py) - Shared functionality
+- **Notebooks Jupyter** (.ipynb) - Materiais de aprendizado interativo
+- **Aplicações Python** (app.py) - Aplicações independentes demonstrando conceitos
+- **Funções Utilitárias** (utils.py) - Funcionalidade compartilhada
 
-### Module Breakdown
+### Detalhamento dos Módulos
 
-- **Module 0**: RAG Application - Basic RAG implementation using LangSmith docs
-- **Module 1**: Tracing Basics - LangSmith tracing fundamentals, conversation threads
-- **Module 2**: Evaluations - Experiments, evaluators, pairwise comparisons, dataset upload
-- **Module 3**: Prompt Engineering - Lifecycle, playground experiments, prompt hub
-- **Module 4**: Feedback - Publishing and collecting user feedback
-- **Module 5**: Production Monitoring - Online evaluation, filtering
+- **Módulo 0**: Aplicação RAG - Implementação básica de RAG usando documentos LangSmith
+- **Módulo 1**: Fundamentos de Rastreamento - Fundamentos de rastreamento LangSmith, threads de conversação
+- **Módulo 2**: Avaliações - Experimentos, avaliadores, comparações pareadas, upload de dataset
+- **Módulo 3**: Engenharia de Prompts - Ciclo de vida, experimentos playground, hub de prompts
+- **Módulo 4**: Feedback - Publicação e coleta de feedback do usuário
+- **Módulo 5**: Monitoramento de Produção - Avaliação online, filtragem
 
-## Key Technologies
+## Tecnologias Principais
 
-- **LangChain** - Framework for LLM applications
-- **LangSmith** - Observability and evaluation platform
-- **Google Gemini** - Primary LLM provider (gemini-1.5-flash)
-- **SKLearnVectorStore** - Vector storage for RAG
-- **Jupyter** - Interactive development environment
+- **LangChain** - Framework para aplicações LLM
+- **LangSmith** - Plataforma de observabilidade e avaliação
+- **Google Gemini** - Provedor LLM principal (gemini-1.5-flash)
+- **SKLearnVectorStore** - Armazenamento vetorial para RAG
+- **Jupyter** - Ambiente de desenvolvimento interativo
 
-## Common Development Commands
+## Comandos Comuns de Desenvolvimento
 
-**Run Jupyter Notebooks:**
+**Executar Notebooks Jupyter:**
 
 ```bash
 jupyter notebook
-# Navigate to notebooks/module_X/ and open .ipynb files
+# Navegue para notebooks/module_X/ e abra arquivos .ipynb
 ```
 
-**Run Standalone Applications:**
+**Executar Aplicações Independentes:**
 
 ```bash
 cd notebooks/module_X/
 python app.py
 ```
 
-**Install Dependencies:**
+**Instalar Dependências:**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## RAG Application Pattern
+## Padrão de Aplicação RAG
 
-All RAG implementations follow this pattern:
+Todas as implementações RAG seguem este padrão:
 
-1. **Document Retrieval** - `retrieve_documents()` with `@traceable(run_type="chain")`
-2. **Response Generation** - `generate_response()` with `@traceable(run_type="chain")`
-3. **LLM Calls** - `call_gemini()` with `@traceable(run_type="llm")`
-4. **Main Function** - `langsmith_rag()` orchestrates the flow
+1. **Recuperação de Documentos** - `retrieve_documents()` com `@traceable(run_type="chain")`
+2. **Geração de Resposta** - `generate_response()` com `@traceable(run_type="chain")`
+3. **Chamadas LLM** - `call_gemini()` com `@traceable(run_type="llm")`
+4. **Função Principal** - `langsmith_rag()` orquestra o fluxo
 
-The RAG system indexes LangSmith documentation from sitemap.xml and uses RecursiveCharacterTextSplitter with 500-token chunks.
+O sistema RAG indexa documentação LangSmith do sitemap.xml e usa RecursiveCharacterTextSplitter com chunks de 500 tokens.
 
-## Google Gemini Integration
+## Integração Google Gemini
 
-The project uses Google Gemini API through:
+O projeto usa a API Google Gemini através de:
 - **Embeddings**: `GoogleGenerativeAIEmbeddings(model="models/embedding-001")`
-- **Chat Models**: `gemini-1.5-flash` (primary) and `gemini-1.5-pro` (advanced)
-- **Utility Functions**: `gemini_utils.py` provides conversion helpers for OpenAI→Gemini format
-- **Message Format**: Converts OpenAI chat format to Gemini's role+parts structure
+- **Modelos de Chat**: `gemini-1.5-flash` (principal) e `gemini-1.5-pro` (avançado)
+- **Funções Utilitárias**: `gemini_utils.py` fornece helpers de conversão para formato OpenAI→Gemini
+- **Formato de Mensagem**: Converte formato de chat OpenAI para estrutura role+parts do Gemini
 
-## LangSmith Integration
+## Integração LangSmith
 
-All functions are decorated with `@traceable` for observability:
+Todas as funções são decoradas com `@traceable` para observabilidade:
 
-- `run_type="chain"` for orchestration functions
-- `run_type="llm"` for direct LLM calls
-- Metadata includes provider ("google") and model information ("gemini-1.5-flash")
+- `run_type="chain"` para funções de orquestração
+- `run_type="llm"` para chamadas diretas de LLM
+- Metadata inclui provedor ("google") e informações do modelo ("gemini-1.5-flash")
 
-## Working with the Codebase
+## Trabalhando com a Base de Código
 
-- Notebooks contain both educational content and runnable code
-- Each module builds on previous concepts
-- Utils files contain reusable functionality across modules
-- All examples use LangSmith for tracing and evaluation
-- Vector databases are cached in temp directory as .parquet files
-- Google Gemini models accessed via `gemini_utils.py` helper functions
-- Message conversion handled automatically between OpenAI and Gemini formats
+- Notebooks contêm tanto conteúdo educacional quanto código executável
+- Cada módulo se baseia em conceitos anteriores
+- Arquivos utils contêm funcionalidade reutilizável entre módulos
+- Todos os exemplos usam LangSmith para rastreamento e avaliação
+- Bancos de dados vetoriais são armazenados em cache no diretório temp como arquivos .parquet
+- Modelos Google Gemini acessados via funções helper `gemini_utils.py`
+- Conversão de mensagens tratada automaticamente entre formatos OpenAI e Gemini

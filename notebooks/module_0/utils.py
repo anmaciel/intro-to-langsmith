@@ -9,7 +9,7 @@ def get_vector_db_retriever():
     persist_path = os.path.join(tempfile.gettempdir(), "union.parquet")
     embd = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 
-    # If vector store exists, then load it
+    # Se o armazenamento vetorial existir, então carregá-lo
     if os.path.exists(persist_path):
         vectorstore = SKLearnVectorStore(
             embedding=embd,
@@ -18,7 +18,7 @@ def get_vector_db_retriever():
         )
         return vectorstore.as_retriever(lambda_mult=0)
 
-    # Otherwise, index LangSmith documents and create new vector store
+    # Caso contrário, indexar documentos LangSmith e criar novo armazenamento vetorial
     ls_docs_sitemap_loader = SitemapLoader(web_path="https://docs.smith.langchain.com/sitemap.xml", continue_on_failure=True)
     ls_docs = ls_docs_sitemap_loader.load()
 
